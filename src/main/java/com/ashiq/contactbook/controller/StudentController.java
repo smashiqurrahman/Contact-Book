@@ -15,15 +15,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ashiq.contactbook.entity.Address;
+import com.ashiq.contactbook.entity.Occupation;
 import com.ashiq.contactbook.entity.Phone;
 import com.ashiq.contactbook.entity.Student;
 import com.ashiq.contactbook.entity.User;
 import com.ashiq.contactbook.repository.PhoneRepo;
+import com.ashiq.contactbook.service.AddressService;
+import com.ashiq.contactbook.service.OccupationService;
 import com.ashiq.contactbook.service.PhoneService;
 import com.ashiq.contactbook.service.StudentService;
 import com.ashiq.contactbook.service.UserService;
+
 
 @RestController
 @RequestMapping("/")
@@ -38,6 +44,12 @@ public class StudentController {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private AddressService addressService;
+	
+	@Autowired
+	private OccupationService occupationService;
+	
 	/* Student */
 
 	@GetMapping("/students")
@@ -51,11 +63,70 @@ public class StudentController {
 		return studentService.saveStudent(student);
 	}
 
+	/* Address */
+	
+	@PostMapping("/address")
+	public ResponseEntity<Address> saveAddress(@RequestBody Address address){
+		return new ResponseEntity<Address>(addressService.saveAddress(address), HttpStatus.CREATED);
+	}
+	
+	@PutMapping("/address")
+	public ResponseEntity<Address> updateAddress(@RequestBody Address address){
+		return addressService.updateAddress(address);
+	}
+	
+	@GetMapping("/addresses")
+	public List<Address> getAllAddresses(){
+		return addressService.getAllAddresses();
+	}
+	
+	@GetMapping("/address/{id}")
+	public Optional<Address> getAddressById(@PathVariable("id") int id) {
+		return addressService.getAddressById(id);
+	}
+		
+	@DeleteMapping("/address/{id}")
+	public String deleteAddress(@PathVariable("id") int id) {
+		return addressService.deleteAddress(id);
+	}
+	
+	/* OccupationInfo */
+	@PostMapping("/occupation")
+	public ResponseEntity<Occupation> saveOccupation(@RequestBody Occupation occupation){
+		return occupationService.saveOccupation(occupation);
+	}
+	
+	@PutMapping("/occupation")
+	public ResponseEntity<Occupation> updateOccupation(@RequestBody Occupation occupation){
+		return occupationService.updateOccupation(occupation);
+	}	
+	
+	@GetMapping("/occupations")
+	public ResponseEntity<List<Occupation>> getAllOccupation(){
+		return occupationService.getAllOccupation();
+	}
+	
+	@GetMapping("/occupation/{id}")
+	public ResponseEntity<Occupation> getOccupationById(@PathVariable("id") int id) {
+		return occupationService.getOccupationById(id);
+	}
+	
+	@DeleteMapping("occupation/{id}")
+	public ResponseEntity<Occupation> deleteOccupation(@PathVariable("id") int id) {
+		return occupationService.deleteOccupation(id);
+	}
+	
+		
 	/* Phone */
 	
 	@PostMapping("phone")
 	public ResponseEntity<Phone> addPhone(@RequestBody Phone phone){
 		return new ResponseEntity<Phone>(phoneService.addPhone(phone), HttpStatus.CREATED);
+	}
+	
+	@PutMapping("/phone")
+	public ResponseEntity<Phone> updatePhone(@RequestBody Phone phone){
+		return phoneService.updatePhone(phone);
 	}
 	
 	@GetMapping("/phones")
@@ -66,11 +137,6 @@ public class StudentController {
 	@GetMapping("/phone/{id}")
 	public Optional<Phone> getPhoneById(@PathVariable("id") int id) {
 		return phoneService.getPhoneById(id);
-	}
-	
-	@PutMapping("/phone")
-	public ResponseEntity<Phone> updatePhone(@RequestBody Phone phone){
-		return new ResponseEntity<>(phoneService.updatePhone(phone), HttpStatus.OK);
 	}
 	
 	@DeleteMapping("phone/{id}")
@@ -92,7 +158,7 @@ public class StudentController {
 	
 	@PutMapping("/user")
 	public ResponseEntity<User> updateUser(@RequestBody User user) {
-		return new ResponseEntity<>(userService.updateUser(user), HttpStatus.OK);
+		return userService.updateUser(user);
 	}
 
 	@GetMapping("/user/{id}")

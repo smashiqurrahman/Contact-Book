@@ -3,8 +3,6 @@ package com.ashiq.contactbook.entity;
 import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,7 +12,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -50,4 +49,21 @@ public class User {
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "user_id_fk", referencedColumnName = "user_id")
 	private List<Phone> phones;
+	
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "user_address", 
+	joinColumns = {
+			@JoinColumn(name = "user_id_fk", referencedColumnName = "user_id") },
+	inverseJoinColumns = {
+			@JoinColumn(name = "address_id_fk", referencedColumnName = "id") })    
+	private List<Address> addresses;
+	
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "user_occupation", 
+	joinColumns = {
+			@JoinColumn(name = "user_id_fk", referencedColumnName = "user_id") },
+	inverseJoinColumns = {
+			@JoinColumn(name = "occupation_id_fk", referencedColumnName = "id") })    
+	private List<Occupation> occupations;
+	
 }
