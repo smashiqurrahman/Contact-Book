@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,29 +21,37 @@ public class UserService {
 	@Autowired
 	private UserRepo userRepo;
 
-	public List<User> getAllUsers() {
-		return userRepo.findAll();
+	public ResponseEntity<List<User>> getAllUsers() {
+		return new ResponseEntity<List<User>>(userRepo.findAll(), HttpStatus.FOUND);
 	}
 
-	public User addUser(User user) {
-		return userRepo.save(user);
+	public ResponseEntity<User> getUserById(int id) {
+		boolean isExisting = userRepo.existsById(id);
+		if(isExisting) {
+			User foundUser = userRepo.findById(id).orElse(null);
+			return new ResponseEntity<User>(foundUser, HttpStatus.FOUND);
+		}else {
+			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
+		}
+		
 	}
 
-	public Optional<User> getUserById(int id) {
-		return userRepo.findById(id);
+	public ResponseEntity<User> addUser(User user) {
+		return new ResponseEntity<User>(userRepo.save(user), HttpStatus.CREATED);
 	}
+
 
 //	public List<User> searchByFirstAndOrLastName(@Param("f_name") String f_name, @Param("l_name") String l_name) {
 //		return userRepo.searchByFirstAndOrl_name(f_name, l_name);
 //	}
 
-	public String deleteUser(int id) {
+	public ResponseEntity<User> deleteUser(int id) {
 		boolean isExisting = userRepo.existsById(id);
 		if (isExisting) {
 			userRepo.deleteById(id);
-			return "User removed !! " + id;
+			return new ResponseEntity<User>(HttpStatus.OK);
 		} else {
-			return "No user found with this id : " + id;
+			return new ResponseEntity<User>(HttpStatus.NO_CONTENT);
 		}
 	}
 

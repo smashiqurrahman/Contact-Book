@@ -67,7 +67,7 @@ public class StudentController {
 	
 	@PostMapping("/address")
 	public ResponseEntity<Address> saveAddress(@RequestBody Address address){
-		return new ResponseEntity<Address>(addressService.saveAddress(address), HttpStatus.CREATED);
+		return addressService.saveAddress(address);
 	}
 	
 	@PutMapping("/address")
@@ -76,17 +76,17 @@ public class StudentController {
 	}
 	
 	@GetMapping("/addresses")
-	public List<Address> getAllAddresses(){
+	public ResponseEntity<List<Address>> getAllAddresses(){
 		return addressService.getAllAddresses();
 	}
 	
 	@GetMapping("/address/{id}")
-	public Optional<Address> getAddressById(@PathVariable("id") int id) {
+	public ResponseEntity<Address> getAddressById(@PathVariable("id") int id) {
 		return addressService.getAddressById(id);
 	}
 		
 	@DeleteMapping("/address/{id}")
-	public String deleteAddress(@PathVariable("id") int id) {
+	public ResponseEntity<Address> deleteAddress(@PathVariable("id") int id) {
 		return addressService.deleteAddress(id);
 	}
 	
@@ -121,7 +121,7 @@ public class StudentController {
 	
 	@PostMapping("phone")
 	public ResponseEntity<Phone> addPhone(@RequestBody Phone phone){
-		return new ResponseEntity<Phone>(phoneService.addPhone(phone), HttpStatus.CREATED);
+		return phoneService.addPhone(phone);
 	}
 	
 	@PutMapping("/phone")
@@ -130,30 +130,30 @@ public class StudentController {
 	}
 	
 	@GetMapping("/phones")
-	public List<Phone> getAllPhoneNumber() {
+	public ResponseEntity<List<Phone>> getAllPhoneNumber() {
 		return phoneService.getAllPhoneNumber();
 	}
 
 	@GetMapping("/phone/{id}")
-	public Optional<Phone> getPhoneById(@PathVariable("id") int id) {
+	public ResponseEntity<Phone> getPhoneById(@PathVariable("id") int id) {
 		return phoneService.getPhoneById(id);
 	}
 	
 	@DeleteMapping("phone/{id}")
-	public String deletePhone(@PathVariable("id") int id) {
+	public ResponseEntity<Phone> deletePhone(@PathVariable("id") int id) {
 		return phoneService.deletePhone(id);
 	}
 	
 	/* User */
 
 	@GetMapping("/users")
-	public List<User> getAllUsers() {
+	public ResponseEntity<List<User>> getAllUsers() {
 		return userService.getAllUsers();
 	}
 
 	@PostMapping("/user")
 	public ResponseEntity<User> addUser(@RequestBody User user) {
-		return new ResponseEntity<>(userService.addUser(user), HttpStatus.CREATED);
+		return userService.addUser(user);
 	}
 	
 	@PutMapping("/user")
@@ -162,7 +162,7 @@ public class StudentController {
 	}
 
 	@GetMapping("/user/{id}")
-	public Optional<User> getUserById(@PathVariable("id") int id) {
+	public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
 		return userService.getUserById(id);
 	}
 	
@@ -172,7 +172,7 @@ public class StudentController {
 //	}
 	
 	@DeleteMapping("/user/{id}")
-	public String deleteUser(@PathVariable("id") int id) {
+	public ResponseEntity<User> deleteUser(@PathVariable("id") int id) {
 		return userService.deleteUser(id);
 	}
 }

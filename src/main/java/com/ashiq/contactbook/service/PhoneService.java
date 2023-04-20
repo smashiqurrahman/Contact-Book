@@ -19,16 +19,33 @@ public class PhoneService {
 	@Autowired
 	PhoneRepo phoneRepo;
 
-	public Phone addPhone(Phone phone) {	
-		return phoneRepo.save(phone);
+	public ResponseEntity<List<Phone>> getAllPhoneNumber() {
+		return new ResponseEntity<List<Phone>>(phoneRepo.findAll(), HttpStatus.FOUND);
 	}
 
-	public List<Phone> getAllPhoneNumber() {
-		return phoneRepo.findAll();
+	public ResponseEntity<Phone> getPhoneById(int id) {
+		boolean isExisting = phoneRepo.existsById(id);
+		if (isExisting) {			
+			Phone foundPhone = phoneRepo.findById(id).orElse(null);
+			return new ResponseEntity<Phone>(foundPhone, HttpStatus.FOUND);
+		} else {
+			return new ResponseEntity<Phone>(HttpStatus.NOT_FOUND);
+		}
 	}
 
-	public Optional<Phone> getPhoneById(int id) {
-		return phoneRepo.findById(id);
+	public ResponseEntity<Phone> addPhone(Phone phone) {
+		return new ResponseEntity<Phone>(phoneRepo.save(phone), HttpStatus.CREATED);
+	}
+
+	public ResponseEntity<Phone> deletePhone(int id) {
+		boolean isExisting = phoneRepo.existsById(id);
+
+		if (isExisting) {
+			phoneRepo.deleteById(id);
+			return new ResponseEntity<Phone>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<Phone>(HttpStatus.NO_CONTENT);
+		}
 	}
 
 	public ResponseEntity<Phone> updatePhone(Phone phone) {
@@ -43,14 +60,4 @@ public class PhoneService {
 		}
 	}
 
-	public String deletePhone(int id) {
-		boolean isExisting = phoneRepo.existsById(id);
-
-		if (isExisting) {
-			phoneRepo.deleteById(id);
-			return "Phone removed !! " + id;
-		} else {
-			return "No phone number found with this id : " + id;
-		}
-	}
 }

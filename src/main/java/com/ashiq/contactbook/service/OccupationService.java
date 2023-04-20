@@ -26,8 +26,8 @@ public class OccupationService {
 	public ResponseEntity<Occupation> getOccupationById(int id) {
 		boolean isExisting = occupationRepo.existsById(id);
 		if (isExisting) {			
-			occupationRepo.findById(id);
-			return new ResponseEntity<Occupation>(HttpStatus.FOUND);
+			Occupation foundOccupation = occupationRepo.findById(id).orElse(null);
+			return new ResponseEntity<Occupation>(foundOccupation, HttpStatus.FOUND);
 		} else {
 			return new ResponseEntity<Occupation>(HttpStatus.NOT_FOUND);
 		}

@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +19,32 @@ public class AddressService {
 	@Autowired
 	private AddressRepo addressRepo;
 
-	public List<Address> getAllAddresses() {
-		return addressRepo.findAll();
+	public ResponseEntity<List<Address>> getAllAddresses() {
+		return new ResponseEntity<List<Address>>(addressRepo.findAll(), HttpStatus.FOUND);
 	}
 
-	public Optional<Address> getAddressById(int id) {
-		return addressRepo.findById(id);
+	public ResponseEntity<Address> getAddressById(int id) {
+		boolean isExisting = addressRepo.existsById(id);
+		if (isExisting) {
+			Address foundAddress = addressRepo.findById(id).orElse(null);
+			return new ResponseEntity<Address>(foundAddress, HttpStatus.FOUND);
+		} else {
+			return new ResponseEntity<Address>(HttpStatus.NOT_FOUND);
+		}
 	}
 
-	public Address saveAddress(Address address) {
-		return addressRepo.save(address);
+	public ResponseEntity<Address> saveAddress(Address address) {
+		return new ResponseEntity<Address>(addressRepo.save(address), HttpStatus.CREATED);
+	}
+
+	public ResponseEntity<Address> deleteAddress(int id) {
+		boolean isExisting = addressRepo.existsById(id);
+		if (isExisting) {
+			addressRepo.deleteById(id);
+			return new ResponseEntity<Address>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<Address>(HttpStatus.NO_CONTENT);
+		}
 	}
 
 	public ResponseEntity<Address> updateAddress(Address address) {
@@ -44,16 +61,6 @@ public class AddressService {
 			existingAddress.setLongitude(address.getLongitude());
 
 			return new ResponseEntity<Address>(addressRepo.save(existingAddress), HttpStatus.OK);
-		}
-	}
-
-	public String deleteAddress(int id) {
-		boolean isExisting = addressRepo.existsById(id);
-		if (isExisting) {
-			addressRepo.deleteById(id);
-			return "Address removed !! " + id;
-		} else {
-			return "No Address number found with this id : " + id;
 		}
 	}
 }
