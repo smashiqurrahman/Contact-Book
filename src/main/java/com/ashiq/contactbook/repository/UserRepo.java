@@ -1,18 +1,23 @@
 package com.ashiq.contactbook.repository;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import com.ashiq.contactbook.entity.Gender;
 import com.ashiq.contactbook.entity.User;
 
 public interface UserRepo extends JpaRepository<User, Integer>{
 
-//	@Query("select u from user u where (:f_name is null or u.f_name = :f_name)"
-//		      +" and (:l_name is null or u.l_name = :l_name)")
-//		List<User> searchByFirstAndOrl_name(@Param("f_name") String f_name,
-//		                                              @Param("l_name") String l_name);
-		    
+	/* JPQL */
+	@Query("SELECT u from User u WHERE u.gender = :n")
+	public List<User> getUsersByGender(@Param("n") Gender n);
+	
+	/* Native Query */
+	@Query(value = "select * from user u where u.dob < ?1", nativeQuery = true)
+	public List<User> getUserDobLimit(@Param("date") LocalDate date); 
 }

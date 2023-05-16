@@ -1,6 +1,10 @@
 package com.ashiq.contactbook.controller;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ashiq.contactbook.entity.Address;
+import com.ashiq.contactbook.entity.Gender;
 import com.ashiq.contactbook.entity.Occupation;
 import com.ashiq.contactbook.entity.Phone;
 import com.ashiq.contactbook.entity.Student;
@@ -29,7 +34,6 @@ import com.ashiq.contactbook.service.OccupationService;
 import com.ashiq.contactbook.service.PhoneService;
 import com.ashiq.contactbook.service.StudentService;
 import com.ashiq.contactbook.service.UserService;
-
 
 @RestController
 @RequestMapping("/")
@@ -46,10 +50,10 @@ public class StudentController {
 
 	@Autowired
 	private AddressService addressService;
-	
+
 	@Autowired
 	private OccupationService occupationService;
-	
+
 	/* Student */
 
 	@GetMapping("/students")
@@ -64,71 +68,70 @@ public class StudentController {
 	}
 
 	/* Address */
-	
+
 	@PostMapping("/address")
-	public ResponseEntity<Address> saveAddress(@RequestBody Address address){
+	public ResponseEntity<Address> saveAddress(@RequestBody Address address) {
 		return addressService.saveAddress(address);
 	}
-	
+
 	@PutMapping("/address")
-	public ResponseEntity<Address> updateAddress(@RequestBody Address address){
+	public ResponseEntity<Address> updateAddress(@RequestBody Address address) {
 		return addressService.updateAddress(address);
 	}
-	
+
 	@GetMapping("/addresses")
-	public ResponseEntity<List<Address>> getAllAddresses(){
+	public ResponseEntity<List<Address>> getAllAddresses() {
 		return addressService.getAllAddresses();
 	}
-	
+
 	@GetMapping("/address/{id}")
 	public ResponseEntity<Address> getAddressById(@PathVariable("id") int id) {
 		return addressService.getAddressById(id);
 	}
-		
+
 	@DeleteMapping("/address/{id}")
 	public ResponseEntity<Address> deleteAddress(@PathVariable("id") int id) {
 		return addressService.deleteAddress(id);
 	}
-	
+
 	/* OccupationInfo */
 	@PostMapping("/occupation")
-	public ResponseEntity<Occupation> saveOccupation(@RequestBody Occupation occupation){
+	public ResponseEntity<Occupation> saveOccupation(@RequestBody Occupation occupation) {
 		return occupationService.saveOccupation(occupation);
 	}
-	
+
 	@PutMapping("/occupation")
-	public ResponseEntity<Occupation> updateOccupation(@RequestBody Occupation occupation){
+	public ResponseEntity<Occupation> updateOccupation(@RequestBody Occupation occupation) {
 		return occupationService.updateOccupation(occupation);
-	}	
-	
+	}
+
 	@GetMapping("/occupations")
-	public ResponseEntity<List<Occupation>> getAllOccupation(){
+	public ResponseEntity<List<Occupation>> getAllOccupation() {
 		return occupationService.getAllOccupation();
 	}
-	
+
 	@GetMapping("/occupation/{id}")
 	public ResponseEntity<Occupation> getOccupationById(@PathVariable("id") int id) {
 		return occupationService.getOccupationById(id);
 	}
-	
+
 	@DeleteMapping("occupation/{id}")
 	public ResponseEntity<Occupation> deleteOccupation(@PathVariable("id") int id) {
 		return occupationService.deleteOccupation(id);
 	}
-	
-		
+
 	/* Phone */
-	
+
 	@PostMapping("phone")
-	public ResponseEntity<Phone> addPhone(@RequestBody Phone phone){
+	public ResponseEntity<Phone> addPhone(@RequestBody Phone phone) {
 		return phoneService.addPhone(phone);
 	}
-	
+
 	@PutMapping("/phone")
-	public ResponseEntity<Phone> updatePhone(@RequestBody Phone phone){
+	public ResponseEntity<Phone> updatePhone(@RequestBody Phone phone) {
 		return phoneService.updatePhone(phone);
 	}
-	
+
 	@GetMapping("/phones")
 	public ResponseEntity<List<Phone>> getAllPhoneNumber() {
 		return phoneService.getAllPhoneNumber();
@@ -138,12 +141,12 @@ public class StudentController {
 	public ResponseEntity<Phone> getPhoneById(@PathVariable("id") int id) {
 		return phoneService.getPhoneById(id);
 	}
-	
+
 	@DeleteMapping("phone/{id}")
 	public ResponseEntity<Phone> deletePhone(@PathVariable("id") int id) {
 		return phoneService.deletePhone(id);
 	}
-	
+
 	/* User */
 
 	@GetMapping("/users")
@@ -155,7 +158,7 @@ public class StudentController {
 	public ResponseEntity<User> addUser(@RequestBody User user) {
 		return userService.addUser(user);
 	}
-	
+
 	@PutMapping("/user")
 	public ResponseEntity<User> updateUser(@RequestBody User user) {
 		return userService.updateUser(user);
@@ -165,14 +168,25 @@ public class StudentController {
 	public ResponseEntity<User> getUserById(@PathVariable("id") int id) {
 		return userService.getUserById(id);
 	}
-	
-//	@GetMapping("user/{f_nameorl_name}")
-//	public List<User> searchByFirstAndOrl_name(@Param("f_name") String f_name, @Param("l_name")  String l_name){
-//		return userService.searchByFirstAndOrLastName(f_name, l_name);
-//	}
-	
+
 	@DeleteMapping("/user/{id}")
 	public ResponseEntity<User> deleteUser(@PathVariable("id") int id) {
 		return userService.deleteUser(id);
+	}
+
+	@GetMapping("/user/getuserbygender/{gender}")
+	public ResponseEntity<List<User>> getUserByGender(@PathVariable("gender") Gender gender) {
+		return userService.getUsersByGender(gender);
+	}
+
+	@GetMapping("/user/getuserdoblimit")
+	public ResponseEntity<List<User>> getUserDobLimit(@RequestParam("date") String date) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		formatter = formatter.withLocale(Locale.US); // Locale specifies human language for translating, and cultural
+														// norms for lowercase/uppercase and abbreviations and such.
+														// Example: Locale.US or Locale.CANADA_FRENCH
+		LocalDate dateFormatted = LocalDate.parse(date, formatter);
+
+		return userService.getUserDobLimit(dateFormatted);
 	}
 }

@@ -1,5 +1,7 @@
 package com.ashiq.contactbook.service;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ashiq.contactbook.entity.Gender;
 import com.ashiq.contactbook.entity.Phone;
 import com.ashiq.contactbook.entity.User;
 import com.ashiq.contactbook.repository.UserRepo;
@@ -27,23 +30,18 @@ public class UserService {
 
 	public ResponseEntity<User> getUserById(int id) {
 		boolean isExisting = userRepo.existsById(id);
-		if(isExisting) {
+		if (isExisting) {
 			User foundUser = userRepo.findById(id).orElse(null);
 			return new ResponseEntity<User>(foundUser, HttpStatus.FOUND);
-		}else {
+		} else {
 			return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
 		}
-		
+
 	}
 
 	public ResponseEntity<User> addUser(User user) {
 		return new ResponseEntity<User>(userRepo.save(user), HttpStatus.CREATED);
 	}
-
-
-//	public List<User> searchByFirstAndOrLastName(@Param("f_name") String f_name, @Param("l_name") String l_name) {
-//		return userRepo.searchByFirstAndOrl_name(f_name, l_name);
-//	}
 
 	public ResponseEntity<User> deleteUser(int id) {
 		boolean isExisting = userRepo.existsById(id);
@@ -70,5 +68,13 @@ public class UserService {
 
 			return new ResponseEntity<User>(userRepo.save(existingUser), HttpStatus.OK);
 		}
+	}
+
+	public ResponseEntity<List<User>> getUsersByGender(Gender gender) {
+		return new ResponseEntity<List<User>>(userRepo.getUsersByGender(gender), HttpStatus.FOUND);
+	}
+	
+	public ResponseEntity<List<User>> getUserDobLimit(LocalDate date) {
+		return new ResponseEntity<List<User>>(userRepo.getUserDobLimit(date), HttpStatus.FOUND);
 	}
 }
